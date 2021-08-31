@@ -12,7 +12,32 @@ dependencies {
     implementation 'com.google.guava:guava:29.0-jre'
     testImplementation 'junit:junit:4.13.1'
 }
+String getVersionName() {
+    def verMatcher = project.version =~ /^([0-9]+\.[0-9]+)\.([0-9]+)(-SNAPSHOT)?$/
 
+    if (!verMatcher.find())
+        throw new GradleException("Invalid project.version!")
+
+    if (System.getenv('TAG_NAME'))
+        return System.getenv('TAG_NAME')
+
+    if (System.getenv('BUILD_ID'))
+        return verMatcher.group(1) + '.' + System.getenv('BUILD_ID') + '-SNAPSHOT'
+
+    return project.version
+}
+afterEvaluate {
+    publishing {
+        
+        publications {
+            mavenJava(MavenPublication) {
+                from components.java
+
+                version = getVersionName()
+            }
+        }
+    }
+}
 // for publishing api jar when dockerPush parent task executed
 task dockerPush {
     finalizedBy publish
