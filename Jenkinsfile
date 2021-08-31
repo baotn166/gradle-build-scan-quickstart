@@ -6,3 +6,4 @@ new org.soramitsu.mainLibrary().call(
   nexusUserId: 'bot-unkai-rw',
   nexusCredentials: 'bot-soramitsu-rw'
 )
+// test
